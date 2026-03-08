@@ -1,0 +1,79 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: codism-file-storage
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/codism_file_storage?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&connectTimeout=5000&socketTimeout=10000}
+    username: ${SPRING_DATASOURCE_USERNAME:codism}
+    password: ${SPRING_DATASOURCE_PASSWORD:codism123!!}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 5000
+      validation-timeout: 3000
+      initialization-fail-timeout: 1
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        default_batch_fetch_size: 50
+    open-in-view: false
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: Asia/Seoul
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+jwt:
+  secret: YOUR_JWT_SECRET_KEY_MUST_BE_AT_LEAST_256_BITS_LONG_FOR_HS256
+  access-token-expiration: 3600000
+  refresh-token-expiration: 604800000
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+logging:
+  level:
+    root: INFO
+    com.codism: DEBUG
+    p6spy: WARN
+
+file:
+  storage:
+    base-path: ${FILE_STORAGE_PATH:/data/files}
+    temp-path: ${FILE_TEMP_PATH:/data/files/temp}
+    base-url: ${FILE_BASE_URL:http://localhost:8084/api/files}
+    temp-expiry-hours: ${FILE_TEMP_EXPIRY_HOURS:24}
+    allowed-extensions: jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,zip
+    max-thumbnail-width: 300
+    max-thumbnail-height: 300
+
+scheduler:
+  temp-cleanup:
+    cron: "0 0 3 * * *"

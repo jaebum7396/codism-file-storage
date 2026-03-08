@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: codism-file-storage
+  namespace: codism-prod
+  labels:
+    app: codism-file-storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: codism-file-storage
+  template:
+    metadata:
+      labels:
+        app: codism-file-storage
+    spec:
+      containers:
+        - name: app
+          image: codism-file-storage:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8084
+          envFrom:
+            - configMapRef:
+                name: codism-file-storage-config
+            - secretRef:
+                name: codism-file-storage-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: file-storage
+              mountPath: /data/files
+            - name: logs
+              mountPath: /logs
+          readinessProbe:
+            tcpSocket:
+              port: 8084
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8084
+            initialDelaySeconds: 60
+            periodSeconds: 30
+      volumes:
+        - name: file-storage
+          hostPath:
+            path: /data/codism-file-storage
+            type: DirectoryOrCreate
+        - name: logs
+          hostPath:
+            path: /logs/codism-file-storage
+            type: DirectoryOrCreate

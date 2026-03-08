@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: codism-file-storage-config
+  namespace: codism-prod
+data:
+  JAVA_OPTS: "-Xms256m -Xmx512m"
+  SPRING_PROFILES_ACTIVE: "prod"
+  TZ: "Asia/Seoul"
+  FILE_STORAGE_PATH: "/data/files"
+  FILE_TEMP_PATH: "/data/files/temp"
+  FILE_BASE_URL: "http://codism-file-storage:8084/api/files"
+  FILE_TEMP_EXPIRY_HOURS: "24"

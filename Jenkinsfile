@@ -53,6 +53,19 @@ pipeline {
     }
 
     post {
+        always {
+            script {
+                sshagent(['server-pem']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -p ${params.SERVER_PORT} \
+                            ${params.SERVER_USER}@${params.SERVER_HOST} '
+                            docker image prune -af --filter "until=1h"
+                            docker builder prune -af --filter "until=1h"
+                        '
+                    """
+                }
+            }
+        }
         success {
             echo '배포 성공!'
         }

@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: codism-file-storage-test
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false;MODE=MYSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+      naming:
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: Asia/Seoul
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+jwt:
+  secret: TEST_JWT_SECRET_KEY_MUST_BE_AT_LEAST_256_BITS_LONG_FOR_HS256_ALGORITHM
+  access-token-expiration: 3600000
+  refresh-token-expiration: 604800000
+
+logging:
+  level:
+    root: WARN
+    com.codism: DEBUG
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
+
+file:
+  storage:
+    base-path: ${java.io.tmpdir}/codism-file-test/files
+    temp-path: ${java.io.tmpdir}/codism-file-test/temp
+    base-url: http://localhost:8084/api/files
+    temp-expiry-hours: 24
+    allowed-extensions: jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,zip
+    max-thumbnail-width: 300
+    max-thumbnail-height: 300
+
+scheduler:
+  temp-cleanup:
+    cron: "0 0 0 31 2 *"

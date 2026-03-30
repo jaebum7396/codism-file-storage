@@ -1,5 +1,6 @@
 package com.codism.filestorage.domain.file.repository;
 
+import ai.codism.common.base.mapper.BaseMapper;
 import ai.codism.common.base.repository.BaseRepositoryImpl;
 import com.codism.filestorage.domain.file.dto.FileSearchCondition;
 import com.codism.filestorage.domain.file.entity.FileEntity;
@@ -14,11 +15,16 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor
 @Getter
 @Accessors(fluent = true)
-public class FileRepositoryImpl extends BaseRepositoryImpl<FileEntity, FileSearchCondition>
+public class FileRepositoryImpl extends BaseRepositoryImpl<FileEntity, FileSearchCondition, BaseMapper<FileEntity, FileSearchCondition>>
         implements FileRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
     private final EntityPath<FileEntity> entityPath = QFileEntity.fileEntity;
+
+    @Override
+    protected BaseMapper<FileEntity, FileSearchCondition> mapper() {
+        return null;
+    }
 
     @Override
     protected BooleanBuilder buildWhereClause(FileSearchCondition condition) {

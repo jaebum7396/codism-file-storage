@@ -80,7 +80,7 @@ public class FileService extends BaseServiceImpl<FileEntity, FileDto, FileReposi
                 .orElseThrow(() -> new IllegalArgumentException("파일을 찾을 수 없습니다."));
         storageService.deleteFile(entity);
         entity.setStatus(FileStatus.DELETED);
-        entity.setDelYn("Y");
+        entity.softDelete();
     }
 
     public List<FileDto> getFilesByGroupId(String groupId) {
@@ -98,7 +98,7 @@ public class FileService extends BaseServiceImpl<FileEntity, FileDto, FileReposi
         for (FileEntity entity : expiredFiles) {
             storageService.deleteFile(entity);
             entity.setStatus(FileStatus.DELETED);
-            entity.setDelYn("Y");
+            entity.softDelete();
         }
 
         return expiredFiles.size();
